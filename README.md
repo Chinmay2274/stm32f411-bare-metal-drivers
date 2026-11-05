@@ -1,33 +1,30 @@
-# Bare-Metal STM32F411 Peripheral Drivers
+# Bare-Metal SPI NOR Flash Driver — STM32F411
 
-Register-level GPIO, SPI, USART and RCC drivers written from scratch for the
-STM32F411E-DISCO — no HAL, no CubeMX, no generated code. The headline
-application is an SPI NOR flash driver with a UART data path and read-back
-verification.
+A W25Q64 flash driver written at the register level on an STM32F411E-DISCO: the
+host sends a payload over UART, the firmware erases a sector, programs it,
+reads it back and reports whether the data survived. No HAL, no CubeMX, no
+generated code — the SPI, USART, GPIO and RCC layers it runs on are written
+from scratch too.
 
 ## Repository Layout
 
 ```
-drivers/Inc, drivers/Src   my drivers — GPIO, SPI, USART, RCC, W25Q64 flash, delay
-Src/MAIN.c                 flash + UART application (the main project)
-Src/00*.c, USART_DEMO.c    smaller exercises used while building the drivers
+Src/MAIN.c                 the flash application
+drivers/Inc, drivers/Src   W25Q64 flash driver, and the SPI, USART, GPIO, RCC
+                           and delay layers it is built on — all my own code
+Src/00*.c, USART_DEMO.c    smaller exercises written while bringing up those layers
 Startup/                   vendor startup file and vector table
 drivers/csrc/              third party — u8g2 display library
 drivers/lsm303agr-pid-*/   third party — ST accelerometer driver
 ```
 
-Everything under `drivers/Inc`, `drivers/Src` and `Src` is my own code.
-`drivers/csrc` and `drivers/lsm303agr-pid-*` are vendored third-party
-libraries included so the project builds; they are used by a separate
-RTOS application, not by the flash project.
+The two third-party folders belong to a separate RTOS project that shares this
+peripheral code; nothing in the flash path uses them. Everything under
+`drivers/Inc`, `drivers/Src` and `Src` is mine.
 
 Only one `main()` can be in the build at a time. The flash application is
 `Src/MAIN.c`; the other files in `Src/` are excluded from the build in the
 CubeIDE project settings.
-
----
-
-# SPI NOR Flash Driver
 
 ## Hardware
 
